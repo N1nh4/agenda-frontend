@@ -8,7 +8,7 @@ async function getContatosService(idAgenda?: string): Promise<Contato[] | undefi
     const idAgendaInt = parseInt(idAgenda);
 
     try {
-        const resposta = await fetch(`http://localhost:8081/minha_agenda/contatos/agenda/${idAgendaInt}`, {
+        const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/minha_agenda/contatos/agenda/${idAgendaInt}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -28,7 +28,7 @@ async function getContatosService(idAgenda?: string): Promise<Contato[] | undefi
 
 async function salvarContatoService(idAgenda: string, nome: string, telefone: string): Promise<number | undefined> {
     try {
-        const resposta = await fetch('http://localhost:8081/minha_agenda/contatos', {
+        const resposta = await fetch('${process.env.NEXT_PUBLIC_API_URL}/minha_agenda/contatos', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -50,7 +50,7 @@ async function salvarContatoService(idAgenda: string, nome: string, telefone: st
 
 async function atualizarContatoService(id: string | undefined, nome: string, telefone: string): Promise<number | undefined> {
     try {
-        const resposta = await fetch(`http://localhost:8081/minha_agenda/contatos/${id}`, {
+        const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/minha_agenda/contatos/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -72,7 +72,7 @@ async function atualizarContatoService(id: string | undefined, nome: string, tel
 
 async function excluirContatoService(id: string | undefined): Promise<number | undefined> {
     try {
-        const resposta = await fetch(`http://localhost:8081/minha_agenda/contatos/${id}`, {
+        const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/minha_agenda/contatos/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
@@ -92,7 +92,7 @@ async function excluirContatoService(id: string | undefined): Promise<number | u
 
 async function buscarContatosPorIdsService(busca: string): Promise<Contato[] | undefined> {
     try {
-        const resposta = await fetch(`http://localhost:8081/minha_agenda/contatos/filtrar/${busca}`, {
+        const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/minha_agenda/contatos/filtrar/${busca}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -118,7 +118,7 @@ async function deletarContatosPorIdsService(ids: number[]): Promise<number | und
     }    
 
     try {
-        const resposta = await fetch(`http://localhost:8081/minha_agenda/contatos/deletar/ids`, {
+        const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/minha_agenda/contatos/deletar/ids`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"

@@ -1,6 +1,6 @@
 async function criarUsuarioService(nome: string, email: string, telefone: string, idAgenda: string | undefined, tipoAgenda: string, senha: string) {
     try {
-        const resposta = await fetch('http://localhost:8081/usuario', {
+        const resposta = await fetch('${process.env.NEXT_PUBLIC_API_URL}/usuario', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -29,7 +29,7 @@ async function criarUsuarioService(nome: string, email: string, telefone: string
 
 async function logar(telefone: string, senha: string): Promise<number | undefined> {
     try {
-        const resposta = await fetch('http://localhost:8081/auth/login', {
+        const resposta = await fetch('${process.env.NEXT_PUBLIC_API_URL}/auth/login', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -51,7 +51,7 @@ async function logar(telefone: string, senha: string): Promise<number | undefine
 }
 
 async function logout() {
-    const resposta = await fetch('http://localhost:8081/auth/logout', {
+    const resposta = await fetch('${process.env.NEXT_PUBLIC_API_URL}/auth/logout', {
         method: "POST",
         credentials: "include"
     })
@@ -61,7 +61,7 @@ async function enviarFotoUsuario(file: File) {
     try {
         const formData = new FormData();
         formData.append("file", file);
-        const resposta = await fetch(`http://localhost:8081/uploads/imagem_perfil`, {
+        const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/uploads/imagem_perfil`, {
             method: "POST",
             credentials: "include",
             body: formData,
@@ -80,7 +80,7 @@ async function enviarFotoUsuario(file: File) {
 }
 
 async function buscarImagemUsuarioService(imagemUrl: string | undefined) {
-    const response = await fetch("http://localhost:8081" + imagemUrl, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${imagemUrl}`, {
         method: "GET",
         credentials: "include", // envia cookies de sessão
     });

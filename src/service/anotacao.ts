@@ -5,7 +5,7 @@ async function salvarAnotacaoService(idAgenda: string | undefined, titulo: strin
         return undefined;
     }
     try {
-        const resposta = await fetch(`http://localhost:8081/minha_agenda/anotacoes`, {
+        const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/minha_agenda/anotacoes`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -29,7 +29,7 @@ async function listarAnotacoesService(idAgenda: string | undefined) {
     }
     console.log("ID da agenda para listar anotações:", idAgenda);
     try {
-        const resposta = await fetch(`http://localhost:8081/minha_agenda/anotacoes/agenda/${idAgenda}`, {
+        const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/minha_agenda/anotacoes/agenda/${idAgenda}`, {
         method: 'GET',
         credentials: 'include', // envia cookies de sessão (JSESSIONID)
         });
@@ -54,7 +54,7 @@ async function atualizarAnotacaoService(
     conteudo: string
     ) {
     try {
-        const resposta = await fetch(`http://localhost:8081/minha_agenda/anotacoes/${id}`, {
+        const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/minha_agenda/anotacoes/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -72,7 +72,7 @@ async function atualizarAnotacaoService(
 
 async function deletarAnotacaoService(id: string): Promise<boolean> {
     try {
-        const resposta = await fetch(`http://localhost:8081/minha_agenda/anotacoes/${id}`, {
+        const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/minha_agenda/anotacoes/${id}`, {
         method: 'DELETE',
         credentials: 'include'
         });

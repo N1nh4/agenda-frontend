@@ -25,7 +25,7 @@ export const UsuarioContextoProvider = ({ children }: { children: React.ReactNod
 
     async function info() {
         try {
-            const resposta = await fetch('http://localhost:8081/auth/me', { credentials: "include" });
+            const resposta = await fetch('${process.env.NEXT_PUBLIC_API_URL}/auth/me', { credentials: "include" });
             if (!resposta.ok) return; // se não estiver logado
             const json = await resposta.json();
 

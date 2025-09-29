@@ -1,6 +1,6 @@
 async function criarUsuarioService(nome: string, email: string, telefone: string, idAgenda: string | undefined, tipoAgenda: string, senha: string) {
     try {
-        const resposta = await fetch('${process.env.NEXT_PUBLIC_API_URL}/usuario', {
+        const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/usuario`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

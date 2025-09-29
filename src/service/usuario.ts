@@ -29,7 +29,7 @@ async function criarUsuarioService(nome: string, email: string, telefone: string
 
 async function logar(telefone: string, senha: string): Promise<number | undefined> {
     try {
-        const resposta = await fetch('${process.env.NEXT_PUBLIC_API_URL}/auth/login', {
+        const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -51,7 +51,7 @@ async function logar(telefone: string, senha: string): Promise<number | undefine
 }
 
 async function logout() {
-    const resposta = await fetch('${process.env.NEXT_PUBLIC_API_URL}/auth/logout', {
+    const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include"
     })

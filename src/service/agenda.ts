@@ -23,7 +23,7 @@ async function criarAgendaService(tipo: string): Promise<{resposta: number, idAg
 
 async function login(telefone: string, senha: string) {
     try {
-        const resposta = await fetch('${process.env.NEXT_PUBLIC_API_URL}/auth/login', {
+        const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

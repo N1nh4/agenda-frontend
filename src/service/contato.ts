@@ -28,7 +28,7 @@ async function getContatosService(idAgenda?: string): Promise<Contato[] | undefi
 
 async function salvarContatoService(idAgenda: string, nome: string, telefone: string): Promise<number | undefined> {
     try {
-        const resposta = await fetch('${process.env.NEXT_PUBLIC_API_URL}/minha_agenda/contatos', {
+        const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/minha_agenda/contatos`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

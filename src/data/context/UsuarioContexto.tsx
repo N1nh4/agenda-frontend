@@ -5,7 +5,7 @@ import { createContext, useEffect, useState } from "react";
 
 export interface UsuarioContextoProps {
     usuario: Usuario | null;
-    setUsuario: (usuario: Usuario) => void;
+    setUsuario: React.Dispatch<React.SetStateAction<Usuario>>;
 }
 
 export const UsuarioContexto = createContext<UsuarioContextoProps | undefined>(undefined);

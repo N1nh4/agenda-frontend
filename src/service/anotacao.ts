@@ -1,87 +1,107 @@
+async function salvarAnotacaoService(
+    idAgenda: string | undefined,
+    titulo: string,
+    conteudo: string
+): Promise<number | undefined> {
+    if (!idAgenda) return undefined;
 
+    const token = localStorage.getItem("jwt");
+    if (!token) return undefined;
 
-async function salvarAnotacaoService(idAgenda: string | undefined, titulo: string, conteudo: string): Promise<number | undefined> {
-    if (!idAgenda) {
-        return undefined;
-    }
     try {
         const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/minha_agenda/anotacoes`, {
-            method: 'POST',
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             },
-            credentials: 'include',
             body: JSON.stringify({ titulo, conteudo, agendaId: idAgenda })
         });
-        if (!resposta.ok) {
-            return undefined;
-        }
+
+        if (!resposta.ok) return undefined;
+
         return resposta.status;
     } catch (error) {
         return undefined;
     }
 }
 
-
 async function listarAnotacoesService(idAgenda: string | undefined) {
-    if (!idAgenda) {
-        return [];
-    }
+    if (!idAgenda) return [];
+
+    const token = localStorage.getItem("jwt");
+    if (!token) return [];
+
     console.log("ID da agenda para listar anotações:", idAgenda);
+
     try {
         const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/minha_agenda/anotacoes/agenda/${idAgenda}`, {
-        method: 'GET',
-        credentials: 'include', // envia cookies de sessão (JSESSIONID)
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
         });
 
         if (!resposta.ok) {
-        console.error("Erro ao buscar anotações. Status:", resposta.status);
-        return [];
+            console.error("Erro ao buscar anotações. Status:", resposta.status);
+            return [];
         }
 
-        // Converte a resposta JSON do backend para um array de anotações
         const dados = await resposta.json();
         return dados;
     } catch (erro) {
         console.error("Erro na requisição de anotações:", erro);
         return [];
-  }
+    }
 }
 
 async function atualizarAnotacaoService(
     id: string,
     titulo: string,
     conteudo: string
-    ) {
+) {
+    const token = localStorage.getItem("jwt");
+    if (!token) return undefined;
+
     try {
         const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/minha_agenda/anotacoes/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ titulo, conteudo, agendaId: undefined }) // agendaId não precisa para atualizar
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ titulo, conteudo, agendaId: undefined }) // agendaId não precisa para atualizar
         });
 
         if (!resposta.ok) return undefined;
-        return resposta.json();
+        return await resposta.json();
     } catch (erro) {
-        console.error('Erro ao atualizar anotação:', erro);
+        console.error("Erro ao atualizar anotação:", erro);
         return undefined;
     }
 }
 
-
 async function deletarAnotacaoService(id: string): Promise<boolean> {
+    const token = localStorage.getItem("jwt");
+    if (!token) return false;
+
     try {
         const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/minha_agenda/anotacoes/${id}`, {
-        method: 'DELETE',
-        credentials: 'include'
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
         });
         return resposta.ok;
     } catch (erro) {
-        console.error('Erro ao deletar anotação:', erro);
+        console.error("Erro ao deletar anotação:", erro);
         return false;
     }
-    }
+}
 
-
-export { salvarAnotacaoService, listarAnotacoesService, atualizarAnotacaoService, deletarAnotacaoService };
+export {
+    salvarAnotacaoService,
+    listarAnotacoesService,
+    atualizarAnotacaoService,
+    deletarAnotacaoService
+};

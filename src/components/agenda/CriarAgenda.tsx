@@ -53,14 +53,14 @@ export default function CriarAgenda() {
         return;
       }
 
-      // Faz login para obter token JWT
-      const token = await logar(respostaUsuario.telefone, senha); // logar deve retornar JWT (string)
-      if (!token || typeof token !== "string") {
+      // Faz login para obter token JWT (string)
+      const token = await logar(respostaUsuario.telefone, senha);
+      if (!token) {
         toast.error("Não foi possível logar");
         return;
       }
 
-      // Atualiza o contexto
+      // Atualiza o contexto do usuário com o token
       setUsuarioContext(
         {
           id: respostaUsuario.id,
@@ -71,7 +71,7 @@ export default function CriarAgenda() {
           tipoAgenda: respostaUsuario.tipoAgenda,
           imagemUrl: respostaUsuario.imagemUrl ?? ""
         },
-        token
+        token // token é string
       );
 
       toast.success("Agenda criada com sucesso! Redirecionando...");

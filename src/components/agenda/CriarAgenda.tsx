@@ -15,7 +15,7 @@ export default function CriarAgenda() {
     const [tipoAgenda, setTipoAgenda] = useState<string>("LIST");
     const nav = useRouter();
 
-    const { usuario } = useUsuario();
+    const { usuario, setUsuario } = useUsuario();
     const [nome, setNome] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [telefone, setTelefone] = useState<string>("");
@@ -39,23 +39,27 @@ export default function CriarAgenda() {
         console.log("usuario contexto: ", usuario)
 
         if (respostaUsuario != null) {
-            usuario!.id = respostaUsuario.id
-            usuario!.idAgenda = respostaUsuario.idAgenda
-            usuario!.nome = respostaUsuario.nome
-            usuario!.email = respostaUsuario.email
-            usuario!.telefone = respostaUsuario.telefone
-            usuario!.tipoAgenda = respostaUsuario.tipoAgenda
-            
+            setUsuario({
+                id: respostaUsuario.id,
+                idAgenda: respostaUsuario.idAgenda,
+                nome: respostaUsuario.nome,
+                email: respostaUsuario.email,
+                telefone: respostaUsuario.telefone,
+                tipoAgenda: respostaUsuario.tipoAgenda,
+                imagemUrl: respostaUsuario.imagemUrl ?? ""
+            });
+
             toast.success('Agenda criada com sucesso! Redirecionando...')
-            const respostaLogar = await logar(usuario!.telefone, senha)
-            
+
+            const respostaLogar = await logar(respostaUsuario.telefone, senha)
             if (respostaLogar !== 200) {
-                toast.error('Não foi possível logar')
+                toast.error('Não foi possível logar')
                 return
             }
+
             nav.push('/minha_agenda')
             return
-        }
+            }
         
         if (respostaUsuario == 400) {
             toast.error('Preencha todos os campos corretamente')

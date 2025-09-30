@@ -7,7 +7,7 @@ import { criarAgendaService } from "@/service/agenda";
 import { criarUsuarioService, logar } from "@/service/usuario";
 import { Eye, EyeClosed } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 export default function CriarAgenda() {
@@ -21,24 +21,40 @@ export default function CriarAgenda() {
     const [telefone, setTelefone] = useState<string>("");
     const [senha, setSenha] = useState<string>("");
     const [mostrarSenha, setMostrarSenha] = useState<boolean>(false);
-    
+
+    useEffect(() => {
+        console.log("🔄 Contexto atualizado:", usuario);
+    }, [usuario]);
+
     async function criarAgendaUsuario() {
+        console.log("🚀 Iniciando criação da agenda...");
         const resposta = await criarAgendaService(tipoAgenda)
+        console.log("📌 Resposta criarAgendaService:", resposta);
+
         const codigohttp = resposta?.resposta
         const idAgenda = resposta?.idAgenda
 
         if (codigohttp !== 201) {
+            console.error("❌ Erro ao criar agenda. Código:", codigohttp);
             toast.error('Não foi possível criar a agenda')
             return
         }
 
-        const respostaUsuario = await criarUsuarioService(nome, email, telefone, idAgenda?.toString() , tipoAgenda, senha)
+        console.log("✅ Agenda criada com sucesso. ID Agenda:", idAgenda);
 
-        console.log("usuario: ", respostaUsuario)
+        const respostaUsuario = await criarUsuarioService(
+            nome,
+            email,
+            telefone,
+            idAgenda?.toString(),
+            tipoAgenda,
+            senha
+        )
 
-        console.log("usuario contexto: ", usuario)
+        console.log("📌 Resposta criarUsuarioService:", respostaUsuario);
+        console.log("👤 Usuário antes do setUsuario:", usuario);
 
-        if (respostaUsuario != null) {
+        if (respostaUsuario != null && respostaUsuario.id) {
             setUsuario({
                 id: respostaUsuario.id,
                 idAgenda: respostaUsuario.idAgenda,
@@ -49,30 +65,37 @@ export default function CriarAgenda() {
                 imagemUrl: respostaUsuario.imagemUrl ?? ""
             });
 
+            console.log("✅ Usuário setado no contexto:", respostaUsuario);
+
             toast.success('Agenda criada com sucesso! Redirecionando...')
 
+            console.log("🔑 Tentando logar...");
             const respostaLogar = await logar(respostaUsuario.telefone, senha)
+            console.log("📌 Resposta logar:", respostaLogar);
+
             if (respostaLogar !== 200) {
+                console.error("❌ Erro ao logar. Código:", respostaLogar);
                 toast.error('Não foi possível logar')
                 return
             }
 
+            console.log("➡️ Redirecionando para /minha_agenda ...");
             nav.push('/minha_agenda')
             return
-            }
-        
+        }
+
         if (respostaUsuario == 400) {
+            console.error("❌ Campos inválidos.");
             toast.error('Preencha todos os campos corretamente')
             return
         }
-        
+
+        console.error("❌ Erro inesperado ao criar usuário.");
         toast.error('Não foi possível criar o usuário')
     }
 
-    // Função para aplicar máscara no telefone
     const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let valor = e.target.value.replace(/\D/g, ""); // remove tudo que não for número
-
+        let valor = e.target.value.replace(/\D/g, "");
         if (valor.length > 10) {
             valor = valor.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
         } else if (valor.length > 5) {
@@ -80,27 +103,18 @@ export default function CriarAgenda() {
         } else if (valor.length > 2) {
             valor = valor.replace(/^(\d{2})(\d{0,5})/, "($1) $2");
         }
-
         setTelefone(valor);
     };
-
-    function limparCampos() {
-        setNome("")
-        setEmail("")
-        setTelefone("")
-        setTipoAgenda("")
-    }
 
     return (
         <Dialog>
             <DialogTrigger asChild>
-              <button
-                className="bg-white hover:bg-amber-100 text-indigo-900 h-11 transition-colors mt-4 px-4 w-fit cursor-pointer"
-              >
-                Criar agenda
-              </button>
+                <button
+                    className="bg-white hover:bg-amber-100 text-indigo-900 h-11 transition-colors mt-4 px-4 w-fit cursor-pointer"
+                >
+                    Criar agenda
+                </button>
             </DialogTrigger>
-
 
             <DialogContent>
                 <DialogHeader>
@@ -155,26 +169,17 @@ export default function CriarAgenda() {
                             value={senha}
                             onChange={(e) => setSenha(e.target.value)}
                         />
-
-                        {
-                            mostrarSenha ?
+                        {mostrarSenha ? (
                             <Eye
-                                className="
-                                    absolute hover:cursor-pointer right-4
-                                    top-[53px] transform -translate-y-1/2
-                                "
+                                className="absolute hover:cursor-pointer right-4 top-[53px] transform -translate-y-1/2"
                                 onClick={() => setMostrarSenha(false)}
-                                />
-                            :
+                            />
+                        ) : (
                             <EyeClosed
-                                className="
-                                    absolute hover:cursor-pointer
-                                    right-4 top-[53px] transform -translate-y-1/2
-                                "
+                                className="absolute hover:cursor-pointer right-4 top-[53px] transform -translate-y-1/2"
                                 onClick={() => setMostrarSenha(true)}
                             />
-                        }
-
+                        )}
                     </div>
 
                     <div className="flex flex-col gap-2">

@@ -13,19 +13,28 @@ export default function EntrarAgenda() {
     const [telefone, setTel] = useState<string>("");
     const [senha, setSenha] = useState<string>("");
 
-    const { setUsuarioContext } = useUsuario();
+    const { usuario, setUsuario } = useUsuario();
 
     async function entrarAgenda() {
         try {
-            const resposta = await login(telefone, senha); // backend deve retornar { token, usuario }
+            const resposta = await login(telefone, senha);
 
-            if (!resposta || !resposta.token || !resposta.usuario) {
+            console.log("resposta: ", resposta);
+
+            if (!resposta) {
                 toast.error('Credenciais inválidas');
                 return;
             }
 
-            // salva no contexto e localStorage
-            setUsuarioContext(resposta.usuario, resposta.token);
+            // atualiza o usuário no contexto
+            setUsuario({
+                id: resposta.id,
+                idAgenda: resposta.idAgenda,
+                nome: resposta.nome,
+                email: resposta.email,
+                telefone: resposta.telefone,
+                tipoAgenda: resposta.tipoAgenda,
+            });
 
             toast.success('Logando...');
             nav.push('/minha_agenda');
@@ -36,7 +45,7 @@ export default function EntrarAgenda() {
     }
 
     const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let valor = e.target.value.replace(/\D/g, "");
+        let valor = e.target.value.replace(/\D/g, ""); // remove tudo que não for número
 
         if (valor.length > 10) {
             valor = valor.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");

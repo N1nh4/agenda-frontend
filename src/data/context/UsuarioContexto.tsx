@@ -1,55 +1,55 @@
 'use client'
 
 import { Usuario } from "@/core";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
-export interface UsuarioContextoProps {
-    usuario: Usuario | null;
-    setUsuario: React.Dispatch<React.SetStateAction<Usuario>>;
+interface UsuarioContextoType {
+  usuario: Usuario | null;
+  token: string | null;
+  setUsuarioContext: (usuario: Usuario, token: string) => void;
+  logout: () => void;
 }
 
-export const UsuarioContexto = createContext<UsuarioContextoProps | undefined>(undefined);
+export const UsuarioContexto = createContext<UsuarioContextoType | undefined>(undefined);
 
-export const UsuarioContextoProvider = ({ children }: { children: React.ReactNode }) => {
-    const [usuario, setUsuario] = useState<Usuario>({
-        id: "",
-        idAgenda: "",
-        nome: "",
-        email: "",
-        telefone: "",
-        tipoAgenda: "",
-        imagemUrl: ""
-    });
+export const UsuarioContextoProvider = ({ children }: { children: ReactNode }) => {
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
-    async function info() {
-        try {
-            const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, { credentials: "include" });
-            if (!resposta.ok) return; // se não estiver logado
-            const json = await resposta.json();
-
-            console.log("usuario", json);
-
-            setUsuario({
-                id: json.id,
-                idAgenda: json.idAgenda,
-                nome: json.nome,
-                email: json.email,
-                telefone: json.telefone,
-                tipoAgenda: json.tipoAgenda,
-                imagemUrl: json.imagemUrl
-            });
-        } catch (e) {
-            console.error(e);
-        }
+  // Carregar do localStorage ao iniciar
+  useEffect(() => {
+    const storedUser = localStorage.getItem('usuario');
+    const storedToken = localStorage.getItem('token');
+    if (storedUser && storedToken) {
+      setUsuario(JSON.parse(storedUser));
+      setToken(storedToken);
     }
+  }, []);
 
-    useEffect(() => {
-        info();
-    }, []);
+  const setUsuarioContext = (usuario: Usuario, token: string) => {
+    setUsuario(usuario);
+    setToken(token);
+    localStorage.setItem('usuario', JSON.stringify(usuario));
+    localStorage.setItem('token', token);
+  };
 
-    return (
-        <UsuarioContexto.Provider value={{ usuario, setUsuario }}>
-            {children}
-        </UsuarioContexto.Provider>
-    );
+  const logout = () => {
+    setUsuario(null);
+    setToken(null);
+    localStorage.removeItem('usuario');
+    localStorage.removeItem('token');
+  };
+
+  return (
+    <UsuarioContexto.Provider value={{ usuario, token, setUsuarioContext, logout }}>
+      {children}
+    </UsuarioContexto.Provider>
+  );
 };
+
+// Hook para acessar o contexto
+export default function useUsuario() {
+  const context = useContext(UsuarioContexto);
+  if (!context) throw new Error("useUsuario deve ser usado dentro de UsuarioContextoProvider");
+  return context;
+}

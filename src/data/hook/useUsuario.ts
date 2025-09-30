@@ -1,14 +1,17 @@
+'use client'
+
 import { useContext } from "react";
 import { UsuarioContexto } from "../context/UsuarioContexto";
 
-const useUsuario = () => {
-    const contexto = useContext(UsuarioContexto)
+// Hook para acessar o contexto do usuário
+export default function useUsuario() {
+  const context = useContext(UsuarioContexto);
 
-    if (!contexto) {
-        throw new Error('useUsuario deve ser usado dentro de um UsuarioContextoProvider')
-    }
+  if (!context) {
+    throw new Error(
+      "useUsuario deve ser usado dentro de UsuarioContextoProvider"
+    );
+  }
 
-    return contexto
+  return context;
 }
-
-export default useUsuario

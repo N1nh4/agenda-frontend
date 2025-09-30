@@ -4,15 +4,13 @@ import { Usuario } from "@/core";
 import { createContext, useEffect, useState } from "react";
 
 export interface UsuarioContextoProps {
-    usuario: Usuario | null
+    usuario: Usuario | null;
+    setUsuario: (usuario: Usuario) => void;
 }
 
-export const UsuarioContexto = createContext<UsuarioContextoProps | undefined>({
-    usuario: {} as Usuario
-});
+export const UsuarioContexto = createContext<UsuarioContextoProps | undefined>(undefined);
 
-export const UsuarioContextoProvider = ({ children }: { children: React.ReactNode}) => {
-
+export const UsuarioContextoProvider = ({ children }: { children: React.ReactNode }) => {
     const [usuario, setUsuario] = useState<Usuario>({
         id: "",
         idAgenda: "",
@@ -25,7 +23,7 @@ export const UsuarioContextoProvider = ({ children }: { children: React.ReactNod
 
     async function info() {
         try {
-            const resposta = await fetch('${process.env.NEXT_PUBLIC_API_URL}/auth/me', { credentials: "include" });
+            const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, { credentials: "include" });
             if (!resposta.ok) return; // se não estiver logado
             const json = await resposta.json();
 
@@ -50,8 +48,8 @@ export const UsuarioContextoProvider = ({ children }: { children: React.ReactNod
     }, []);
 
     return (
-        <UsuarioContexto.Provider value={{ usuario }}>
+        <UsuarioContexto.Provider value={{ usuario, setUsuario }}>
             {children}
         </UsuarioContexto.Provider>
     );
-}
+};

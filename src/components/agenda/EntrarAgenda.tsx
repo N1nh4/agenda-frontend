@@ -9,36 +9,39 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export default function EntrarAgenda() {
-
     const nav = useRouter();
     const [telefone, setTel] = useState<string>("");
     const [senha, setSenha] = useState<string>("");
 
-    const { usuario } = useUsuario();
+    const { usuario, setUsuario } = useUsuario();
 
-     async function entrarAgenda() {
-        const resposta = await login(telefone, senha)
+    async function entrarAgenda() {
+        try {
+            const resposta = await login(telefone, senha);
 
-        console.log("resposta: ", resposta)
-        
-        if (resposta === null) {
-            toast.error('Credenciais inválidas')
-            return
+            console.log("resposta: ", resposta);
+
+            if (!resposta) {
+                toast.error('Credenciais inválidas');
+                return;
+            }
+
+            // atualiza o usuário no contexto
+            setUsuario({
+                id: resposta.id,
+                idAgenda: resposta.idAgenda,
+                nome: resposta.nome,
+                email: resposta.email,
+                telefone: resposta.telefone,
+                tipoAgenda: resposta.tipoAgenda,
+            });
+
+            toast.success('Logando...');
+            nav.push('/minha_agenda');
+        } catch (error) {
+            console.error(error);
+            toast.error('Erro ao tentar entrar');
         }
-
-        if (!usuario) return
-
-        usuario.id = resposta.id
-        usuario.idAgenda = resposta.idAgenda
-        usuario.nome = resposta.nome
-        usuario.email = resposta.email
-        usuario.telefone = resposta.telefone
-        usuario.tipoAgenda = resposta.tipoAgenda
-
-
-        toast.success('Logando...')
-        nav.push('/minha_agenda')
-
     }
 
     const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +57,7 @@ export default function EntrarAgenda() {
 
         setTel(valor);
     };
-    
+
     return (
         <Dialog>
             <DialogTrigger asChild>
